@@ -1,0 +1,23 @@
+:root {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  line-height: 1.5;
+  color: #3b2a2e;
+  background:
+    radial-gradient(circle at top, #fff7f3 0%, #f6ebe6 45%, #f3e4de 100%);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}

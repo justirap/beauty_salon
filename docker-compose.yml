@@ -1,0 +1,54 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: glamora-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-glamora}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change_me}
+      POSTGRES_DB: ${DB_NAME:-glamora}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-glamora} -d ${DB_NAME:-glamora}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    container_name: glamora-backend
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-glamora}
+      DB_PASSWORD: ${DB_PASSWORD:-change_me}
+      DB_NAME: ${DB_NAME:-glamora}
+      DB_SYNCHRONIZE: ${DB_SYNCHRONIZE:-true}
+      JWT_SECRET: ${JWT_SECRET:-change_me_to_a_long_random_string}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-1d}
+    ports:
+      - "${PORT:-3000}:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: glamora-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
