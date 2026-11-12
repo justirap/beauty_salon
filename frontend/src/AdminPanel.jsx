@@ -99,8 +99,6 @@ function AdminPanel({ currentUserId, onCurrentUserChange }) {
 
   return (
     <section className="staff">
-      <h2>Personel</h2>
-
       <form className="card" onSubmit={createAccount}>
         <label className="field">
           Imię

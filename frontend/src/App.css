@@ -49,7 +49,18 @@ input {
   background: #fff;
 }
 
-input:focus {
+textarea {
+  font: inherit;
+  color: inherit;
+  padding: 10px 12px;
+  border: 1px solid rgba(139, 94, 84, 0.28);
+  background: #fff;
+  min-height: 88px;
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus {
   outline: 2px solid #c47b73;
   border-color: transparent;
 }
@@ -124,6 +135,35 @@ h2 {
   margin: 40px 0 0;
 }
 
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 40px;
+}
+
+button.tab {
+  width: auto;
+  margin: 0;
+  padding: 12px 16px;
+  border: 1px solid rgba(139, 94, 84, 0.28);
+  background: transparent;
+  color: inherit;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tabs button.tab + button.tab {
+  margin-left: -1px;
+}
+
+button.tab[aria-selected='true'] {
+  background: #8d4b4b;
+  border-color: #8d4b4b;
+  color: #fffaf8;
+}
+
 select {
   font: inherit;
   color: inherit;
@@ -170,6 +210,37 @@ button.quiet:disabled {
   margin: 0;
 }
 
+.treatment {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: start;
+  padding: 14px 0;
+}
+
+.treatment + .treatment {
+  border-top: 1px solid rgba(139, 94, 84, 0.16);
+}
+
+.treatment .name {
+  margin: 0;
+}
+
+.treatment .meta {
+  margin: 4px 0 0;
+  color: #6d534d;
+}
+
+.treatment .description {
+  margin: 6px 0 0;
+  color: #6d534d;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
 .empty {
   padding: 12px 0;
   color: #6d534d;
@@ -182,7 +253,8 @@ button.quiet:disabled {
 }
 
 @media (max-width: 640px) {
-  .person {
+  .person,
+  .treatment {
     grid-template-columns: 1fr;
   }
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import AdminPanel from './AdminPanel.jsx'
+import TreatmentCatalog from './TreatmentCatalog.jsx'
 import { api, getToken, setToken } from './api.js'
 import './App.css'
 
@@ -22,6 +23,7 @@ function App() {
   const [form, setForm] = useState(EMPTY_FORM)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(Boolean(getToken()))
+  const [panel, setPanel] = useState('treatments')
 
   useEffect(() => {
     if (!getToken()) {
@@ -80,6 +82,7 @@ function App() {
     setError('')
     setForm(EMPTY_FORM)
     setMode('login')
+    setPanel('treatments')
   }
 
   if (loading) {
@@ -93,7 +96,7 @@ function App() {
 
   if (user) {
     return (
-      <main className={user.role === 'ADMIN' ? 'page panel' : 'page'}>
+      <main className="page panel">
         <p className="eyebrow">Glamora</p>
         <h1>Witaj, {user.firstName}</h1>
         <p className="lede">Jesteś zalogowana.</p>
@@ -108,8 +111,39 @@ function App() {
           </button>
         </section>
         {user.role === 'ADMIN' ? (
-          <AdminPanel currentUserId={user.id} onCurrentUserChange={setUser} />
-        ) : null}
+          <>
+            <div className="tabs" role="tablist">
+              <button
+                className="tab"
+                type="button"
+                role="tab"
+                aria-selected={panel === 'treatments'}
+                onClick={() => setPanel('treatments')}
+              >
+                Zabiegi
+              </button>
+              <button
+                className="tab"
+                type="button"
+                role="tab"
+                aria-selected={panel === 'staff'}
+                onClick={() => setPanel('staff')}
+              >
+                Personel
+              </button>
+            </div>
+            {panel === 'treatments' ? (
+              <TreatmentCatalog canManage titled={false} />
+            ) : (
+              <AdminPanel
+                currentUserId={user.id}
+                onCurrentUserChange={setUser}
+              />
+            )}
+          </>
+        ) : (
+          <TreatmentCatalog canManage={false} />
+        )}
       </main>
     )
   }
