@@ -26,6 +26,7 @@ async function bootstrap() {
     .setTitle('Glamora API')
     .setDescription('REST API salonu kosmetycznego')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   SwaggerModule.setup(

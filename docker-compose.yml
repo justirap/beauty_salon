@@ -34,6 +34,10 @@ services:
       DB_SYNCHRONIZE: ${DB_SYNCHRONIZE:-true}
       JWT_SECRET: ${JWT_SECRET:-change_me_to_a_long_random_string}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-1d}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-wlascicielka@glamora.local}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-haslo1234}
+      ADMIN_FIRST_NAME: ${ADMIN_FIRST_NAME:-Ewa}
+      ADMIN_LAST_NAME: ${ADMIN_LAST_NAME:-Adamska}
     ports:
       - "${PORT:-3000}:3000"
     depends_on:

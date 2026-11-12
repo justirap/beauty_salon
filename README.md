@@ -36,6 +36,35 @@ cd frontend && npm install && npm run dev
 
 Frontend: http://localhost:5173
 
+## Konta
+
+Role:
+
+- klientka — zakłada je publiczna rejestracja; w bazie startowej jest pięć takich kont
+- stylistka — w bazie startowej są dwa konta, kolejne dodaje właścicielka
+- właścicielka — zarządza kontami i rolami
+
+Wszystkie konta startowe mają hasło `haslo1234`. Powstają przy starcie, jeśli jeszcze ich nie ma.
+
+Właścicielka:
+
+- `wlascicielka@glamora.local` — Ewa Adamska
+
+Klientki:
+
+- `zofia.nowak@example.com` — Zofia Nowak
+- `hanna.wisniewska@example.com` — Hanna Wiśniewska
+- `maria.wojcik@example.com` — Maria Wójcik
+- `aleksandra.kaminska@example.com` — Aleksandra Kamińska
+- `natalia.lewandowska@example.com` — Natalia Lewandowska
+
+Stylistki:
+
+- `karolina.zielinska@example.com` — Karolina Zielińska
+- `magdalena.szymanska@example.com` — Magdalena Szymańska
+
+Adres i hasło właścicielki można zmienić w `.env` przez `ADMIN_EMAIL` i `ADMIN_PASSWORD`.
+
 ## Główne funkcjonalności
 
 - Rejestracja, logowanie i role: klientka, stylistka, admin
