@@ -23,15 +23,19 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 import { UserRole } from '../users/user.entity';
+import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { CreateTreatmentDto } from './dto/create-treatment.dto';
 import {
   ListTreatmentsQueryDto,
   TreatmentListResponseDto,
 } from './dto/list-treatments-query.dto';
 import {
+  toIngredientResponse,
   toTreatmentResponse,
+  TreatmentIngredientResponseDto,
   TreatmentResponseDto,
 } from './dto/treatment-response.dto';
+import { UpdateIngredientDto } from './dto/update-ingredient.dto';
 import { UpdateTreatmentDto } from './dto/update-treatment.dto';
 import { TreatmentsService } from './treatments.service';
 
@@ -92,5 +96,42 @@ export class TreatmentsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.treatmentsService.remove(id);
+  }
+
+  @Post(':id/ingredients')
+  @Roles(UserRole.ADMIN)
+  @ApiCreatedResponse({ type: TreatmentIngredientResponseDto })
+  async addIngredient(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: CreateIngredientDto,
+  ): Promise<TreatmentIngredientResponseDto> {
+    const ingredient = await this.treatmentsService.addIngredient(id, dto);
+    return toIngredientResponse(ingredient);
+  }
+
+  @Patch(':id/ingredients/:ingredientId')
+  @Roles(UserRole.ADMIN)
+  @ApiOkResponse({ type: TreatmentIngredientResponseDto })
+  async updateIngredient(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('ingredientId', ParseUUIDPipe) ingredientId: string,
+    @Body() dto: UpdateIngredientDto,
+  ): Promise<TreatmentIngredientResponseDto> {
+    const ingredient = await this.treatmentsService.updateIngredient(
+      id,
+      ingredientId,
+      dto,
+    );
+    return toIngredientResponse(ingredient);
+  }
+
+  @Delete(':id/ingredients/:ingredientId')
+  @Roles(UserRole.ADMIN)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removeIngredient(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('ingredientId', ParseUUIDPipe) ingredientId: string,
+  ): Promise<void> {
+    return this.treatmentsService.removeIngredient(id, ingredientId);
   }
 }

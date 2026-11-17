@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import AdminPanel from './AdminPanel.jsx'
 import TreatmentCatalog from './TreatmentCatalog.jsx'
+import Warehouse from './Warehouse.jsx'
 import { api, getToken, setToken } from './api.js'
 import './App.css'
 
@@ -126,6 +127,15 @@ function App() {
                 className="tab"
                 type="button"
                 role="tab"
+                aria-selected={panel === 'warehouse'}
+                onClick={() => setPanel('warehouse')}
+              >
+                Magazyn
+              </button>
+              <button
+                className="tab"
+                type="button"
+                role="tab"
                 aria-selected={panel === 'staff'}
                 onClick={() => setPanel('staff')}
               >
@@ -134,12 +144,14 @@ function App() {
             </div>
             {panel === 'treatments' ? (
               <TreatmentCatalog canManage titled={false} />
-            ) : (
+            ) : null}
+            {panel === 'warehouse' ? <Warehouse /> : null}
+            {panel === 'staff' ? (
               <AdminPanel
                 currentUserId={user.id}
                 onCurrentUserChange={setUser}
               />
-            )}
+            ) : null}
           </>
         ) : (
           <TreatmentCatalog canManage={false} />

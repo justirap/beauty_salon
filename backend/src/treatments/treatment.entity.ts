@@ -1,9 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { TreatmentIngredient } from './treatment-ingredient.entity';
 
 @Entity('treatments')
 export class Treatment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @OneToMany(() => TreatmentIngredient, (ingredient) => ingredient.treatment)
+  ingredients: TreatmentIngredient[];
 
   @Column({ length: 80 })
   name: string;

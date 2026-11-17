@@ -137,7 +137,7 @@ h2 {
 
 .tabs {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   margin-top: 40px;
 }
 
@@ -236,6 +236,34 @@ button.quiet:disabled {
   color: #6d534d;
 }
 
+.ingredients {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+
+.ingredient {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 6px;
+  color: #6d534d;
+}
+
+.ingredient input[type='number'] {
+  width: 72px;
+  padding: 6px 8px;
+}
+
+.recipe {
+  display: grid;
+  grid-template-columns: 1fr 88px auto;
+  gap: 8px;
+  margin-top: 12px;
+  align-items: center;
+}
+
 .actions {
   display: flex;
   gap: 8px;
@@ -253,8 +281,18 @@ button.quiet:disabled {
 }
 
 @media (max-width: 640px) {
+  .tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .tabs button.tab + button.tab {
+    margin-left: 0;
+    margin-top: -1px;
+  }
+
   .person,
-  .treatment {
+  .treatment,
+  .recipe {
     grid-template-columns: 1fr;
   }
 }

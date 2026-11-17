@@ -65,6 +65,10 @@ Stylistki:
 
 Adres i hasło właścicielki można zmienić w `.env` przez `ADMIN_EMAIL` i `ADMIN_PASSWORD`.
 
+## Magazyn
+
+Kosmetyki startowe powstają przy starcie, jeśli jeszcze ich nie ma, i są przypięte do zabiegów. Właścicielka zmienia stany i skład w panelu. Zalogowana osoba widzi przy zabiegu, ile którego kosmetyku schodzi na jedną wizytę.
+
 ## Główne funkcjonalności
 
 - Rejestracja, logowanie i role: klientka, stylistka, admin
