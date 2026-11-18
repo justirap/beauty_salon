@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { isForeignKeyError } from '../common/is-foreign-key-error';
 import { TreatmentIngredient } from '../treatments/treatment-ingredient.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ListProductsQueryDto } from './dto/list-products-query.dto';
@@ -90,6 +91,13 @@ export class ProductsService {
       throw new ConflictException('Kosmetyk jest przypisany do zabiegu');
     }
 
-    await this.productsRepository.delete(id);
+    try {
+      await this.productsRepository.delete(id);
+    } catch (error) {
+      if (isForeignKeyError(error)) {
+        throw new ConflictException('Kosmetyk jest używany przy wizycie');
+      }
+      throw error;
+    }
   }
 }

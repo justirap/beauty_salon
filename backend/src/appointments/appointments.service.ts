@@ -219,6 +219,19 @@ export class AppointmentsService {
       );
     }
 
+    const clientClash = await this.findClash(
+      manager,
+      'clientId',
+      clientId,
+      startsAt,
+      endsAt,
+    );
+    if (clientClash) {
+      throw new ConflictException(
+        `Masz już wizytę do ${formatTerm(clientClash.endsAt)}. Wybierz późniejszy termin`,
+      );
+    }
+
     await this.takeStock(manager, treatment.ingredients ?? []);
 
     const saved = await manager.getRepository(Appointment).save(
@@ -348,7 +361,7 @@ export class AppointmentsService {
 
   private async findClash(
     manager: EntityManager,
-    column: 'stylistId',
+    column: 'stylistId' | 'clientId',
     userId: string,
     startsAt: Date,
     endsAt: Date,

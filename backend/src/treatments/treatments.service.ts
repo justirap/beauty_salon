@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
+import { isForeignKeyError } from '../common/is-foreign-key-error';
 import { Product } from '../products/product.entity';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { CreateTreatmentDto } from './dto/create-treatment.dto';
@@ -170,7 +171,14 @@ export class TreatmentsService {
     if (!treatment) {
       throw new NotFoundException('Nie znaleziono zabiegu');
     }
-    await this.treatmentsRepository.delete(id);
+    try {
+      await this.treatmentsRepository.delete(id);
+    } catch (error) {
+      if (isForeignKeyError(error)) {
+        throw new ConflictException('Nie można usunąć zabiegu z wizytami');
+      }
+      throw error;
+    }
   }
 
   private async loadIngredient(

@@ -7,6 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
+import { isForeignKeyError } from '../common/is-foreign-key-error';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ListUsersQueryDto } from './dto/list-users-query.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -128,7 +129,14 @@ export class UsersService {
       await this.assertAnotherAdminRemains();
     }
 
-    await this.usersRepository.delete(id);
+    try {
+      await this.usersRepository.delete(id);
+    } catch (error) {
+      if (isForeignKeyError(error)) {
+        throw new ConflictException('Nie można usunąć konta powiązanego z wizytą');
+      }
+      throw error;
+    }
   }
 
   private async assertAnotherAdminRemains(): Promise<void> {
