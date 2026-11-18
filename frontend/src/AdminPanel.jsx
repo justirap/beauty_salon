@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import StylistSkills from './StylistSkills.jsx'
 import { api } from './api.js'
 
 const ROLE_LABELS = {
@@ -188,6 +189,9 @@ function AdminPanel({ currentUserId, onCurrentUserChange }) {
                 Usuń
               </button>
             )}
+            {person.role === 'STYLIST' ? (
+              <StylistSkills stylistId={person.id} onError={setError} />
+            ) : null}
           </li>
         ))}
       </ul>

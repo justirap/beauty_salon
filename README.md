@@ -69,6 +69,11 @@ Adres i hasło właścicielki można zmienić w `.env` przez `ADMIN_EMAIL` i `AD
 
 Kosmetyki startowe powstają przy starcie, jeśli jeszcze ich nie ma, i są przypięte do zabiegów. Właścicielka zmienia stany i skład w panelu. Zalogowana osoba widzi przy zabiegu, ile którego kosmetyku schodzi na jedną wizytę.
 
+## Wizyty
+
+Klientka umawia wizytę u stylistki, która wykonuje wybrany zabieg. Wizyta zajmuje cały czas trwania zabiegu, więc kolejna u tej stylistki może zacząć się dopiero po jej zakończeniu. Przy zapisie ze stanu schodzą kosmetyki zabiegu, a przy odwołaniu wracają.
+Właścicielka zmienia uprawnienia do zabiegów w panelu personelu.
+
 ## Główne funkcjonalności
 
 - Rejestracja, logowanie i role: klientka, stylistka, admin

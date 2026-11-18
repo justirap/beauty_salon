@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import AdminPanel from './AdminPanel.jsx'
+import Appointments from './Appointments.jsx'
 import TreatmentCatalog from './TreatmentCatalog.jsx'
 import Warehouse from './Warehouse.jsx'
 import { api, getToken, setToken } from './api.js'
@@ -141,6 +142,15 @@ function App() {
               >
                 Personel
               </button>
+              <button
+                className="tab"
+                type="button"
+                role="tab"
+                aria-selected={panel === 'visits'}
+                onClick={() => setPanel('visits')}
+              >
+                Wizyty
+              </button>
             </div>
             {panel === 'treatments' ? (
               <TreatmentCatalog canManage titled={false} />
@@ -152,9 +162,36 @@ function App() {
                 onCurrentUserChange={setUser}
               />
             ) : null}
+            {panel === 'visits' ? <Appointments role={user.role} /> : null}
           </>
         ) : (
-          <TreatmentCatalog canManage={false} />
+          <>
+            <div className="tabs" role="tablist">
+              <button
+                className="tab"
+                type="button"
+                role="tab"
+                aria-selected={panel === 'treatments'}
+                onClick={() => setPanel('treatments')}
+              >
+                Zabiegi
+              </button>
+              <button
+                className="tab"
+                type="button"
+                role="tab"
+                aria-selected={panel === 'visits'}
+                onClick={() => setPanel('visits')}
+              >
+                {user.role === 'STYLIST' ? 'Kalendarz' : 'Wizyty'}
+              </button>
+            </div>
+            {panel === 'visits' ? (
+              <Appointments role={user.role} />
+            ) : (
+              <TreatmentCatalog canManage={false} titled={false} />
+            )}
+          </>
         )}
       </main>
     )
