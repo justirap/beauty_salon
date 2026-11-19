@@ -194,7 +194,8 @@ function Appointments({ role }) {
 
   async function addPhoto(event, appointment) {
     event.preventDefault()
-    const file = event.currentTarget.elements.file.files?.[0]
+    const form = event.currentTarget
+    const file = form.elements.file.files?.[0]
     if (!file) {
       return
     }
@@ -206,7 +207,7 @@ function Appointments({ role }) {
         method: 'POST',
         body,
       })
-      event.currentTarget.reset()
+      form.reset()
       setReload((current) => current + 1)
     } catch (addError) {
       setError(addError.message)
