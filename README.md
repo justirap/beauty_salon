@@ -36,6 +36,8 @@ cd frontend && npm install && npm run dev
 
 Frontend: http://localhost:5173
 
+Schemat bazy powstaje z migracji przy starcie backendu. Ręcznie nakłada się ją w katalogu `backend` przez `npm run migration:run`.
+
 ## Konta
 
 Role:
