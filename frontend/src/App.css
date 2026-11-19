@@ -325,6 +325,14 @@ button.quiet:disabled {
   color: #6d534d;
 }
 
+.history li {
+  padding: 12px 0;
+}
+
+.history li + li {
+  border-top: 1px solid rgba(139, 94, 84, 0.16);
+}
+
 .pager {
   display: flex;
   justify-content: space-between;

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AppointmentsModule } from './appointments/appointments.module';
 import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
@@ -12,6 +13,7 @@ import { TreatmentsModule } from './treatments/treatments.module';
       isGlobal: true,
       envFilePath: ['.env', '../.env'],
     }),
+    EventEmitterModule.forRoot(),
     DatabaseModule,
     AuthModule,
     TreatmentsModule,

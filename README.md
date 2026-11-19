@@ -73,7 +73,7 @@ Kosmetyki startowe powstają przy starcie, jeśli jeszcze ich nie ma, i są przy
 
 ## Wizyty
 
-Klientka umawia wizytę u stylistki, która wykonuje wybrany zabieg. Wizyta zajmuje cały czas trwania zabiegu, więc kolejna może zacząć się dopiero po jej zakończeniu. Dotyczy to kalendarza stylistki i wizyt tej samej klientki. Przy zapisie ze stanu schodzą kosmetyki zabiegu, a przy odwołaniu wracają.
+Klientka umawia wizytę u stylistki, która wykonuje wybrany zabieg. Wizyta zajmuje cały czas trwania zabiegu, więc kolejna może zacząć się dopiero po jej zakończeniu. Dotyczy to kalendarza stylistki i wizyt tej samej klientki. Przy zapisie ze stanu schodzą kosmetyki zabiegu, a przy odwołaniu wracają. Po umówieniu i odwołaniu wizyty stylistka i właścicielka widzą wpis w historii.
 Właścicielka zmienia uprawnienia do zabiegów w panelu personelu.
 
 ## Zdjęcia

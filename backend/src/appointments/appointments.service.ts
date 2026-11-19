@@ -5,31 +5,24 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, EntityManager, In, Repository } from 'typeorm';
 import { Product } from '../products/product.entity';
 import { TreatmentIngredient } from '../treatments/treatment-ingredient.entity';
 import { Treatment } from '../treatments/treatment.entity';
 import { UserRole, User } from '../users/user.entity';
+import {
+  APPOINTMENT_CHANGED,
+  AppointmentChangedEvent,
+} from './appointment-changed.event';
 import { AppointmentPhotosService } from './appointment-photos.service';
 import { AppointmentStockLine } from './appointment-stock-line.entity';
 import { Appointment, AppointmentStatus } from './appointment.entity';
 import { ListAppointmentsQueryDto } from './dto/list-appointments-query.dto';
 import { StylistResponseDto } from './dto/stylist-response.dto';
+import { formatTerm } from './format-term';
 import { StylistSkill } from './stylist-skill.entity';
-
-function formatTerm(value: Date): string {
-  const parts = new Intl.DateTimeFormat('pl-PL', {
-    day: 'numeric',
-    month: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Europe/Warsaw',
-  }).formatToParts(value);
-  const part = (type: Intl.DateTimeFormatPartTypes) =>
-    parts.find((item) => item.type === type)?.value ?? '';
-  return `${part('day')} ${part('month')} ${part('hour')}:${part('minute')}`;
-}
 
 export interface AppointmentPage {
   appointments: Appointment[];
@@ -52,6 +45,7 @@ export class AppointmentsService {
     @InjectRepository(Treatment)
     private readonly treatmentsRepository: Repository<Treatment>,
     private readonly photosService: AppointmentPhotosService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async findAll(
@@ -98,15 +92,19 @@ export class AppointmentsService {
       throw new BadRequestException('Nie można umówić wizyty w przeszłości');
     }
 
-    return this.dataSource.transaction((manager) =>
+    const appointment = await this.dataSource.transaction((manager) =>
       this.book(manager, client.id, input.stylistId, input.treatmentId, startsAt),
     );
+    await this.publish(appointment, 'booked', false);
+    return appointment;
   }
 
   async cancel(user: User, id: string): Promise<Appointment> {
-    return this.dataSource.transaction((manager) =>
+    const appointment = await this.dataSource.transaction((manager) =>
       this.cancelInTransaction(manager, user, id),
     );
+    await this.publish(appointment, 'cancelled', user.role === UserRole.ADMIN);
+    return appointment;
   }
 
   async listStylists(): Promise<StylistResponseDto[]> {
@@ -172,6 +170,24 @@ export class AppointmentsService {
       throw new NotFoundException('Nie znaleziono uprawnienia');
     }
     await this.skillsRepository.delete(existing.id);
+  }
+
+  private async publish(
+    appointment: Appointment,
+    kind: 'booked' | 'cancelled',
+    cancelledByAdmin: boolean,
+  ): Promise<void> {
+    await this.eventEmitter.emitAsync(
+      APPOINTMENT_CHANGED,
+      new AppointmentChangedEvent(
+        appointment.id,
+        `${appointment.client.firstName} ${appointment.client.lastName}`,
+        appointment.treatment.name,
+        appointment.startsAt,
+        kind,
+        cancelledByAdmin,
+      ),
+    );
   }
 
   private async book(

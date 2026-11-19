@@ -34,7 +34,12 @@ import {
   AppointmentPhotosService,
   PHOTO_MAX_BYTES,
 } from './appointment-photos.service';
+import { AppointmentEventsService } from './appointment-events.service';
 import { AppointmentsService } from './appointments.service';
+import {
+  AppointmentEventListResponseDto,
+  toAppointmentEventResponse,
+} from './dto/appointment-event-response.dto';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import {
   AppointmentListResponseDto,
@@ -55,6 +60,7 @@ export class AppointmentsController {
   constructor(
     private readonly appointmentsService: AppointmentsService,
     private readonly photosService: AppointmentPhotosService,
+    private readonly eventsService: AppointmentEventsService,
   ) {}
 
   @Get()
@@ -72,6 +78,16 @@ export class AppointmentsController {
       page: result.page,
       limit: result.limit,
     };
+  }
+
+  @Get('history')
+  @Roles(UserRole.STYLIST, UserRole.ADMIN)
+  @ApiOkResponse({ type: AppointmentEventListResponseDto })
+  async history(
+    @Req() request: { user: User },
+  ): Promise<AppointmentEventListResponseDto> {
+    const events = await this.eventsService.list(request.user);
+    return { data: events.map((event) => toAppointmentEventResponse(event)) };
   }
 
   @Post()

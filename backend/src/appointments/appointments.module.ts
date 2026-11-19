@@ -6,6 +6,9 @@ import { TreatmentIngredient } from '../treatments/treatment-ingredient.entity';
 import { Treatment } from '../treatments/treatment.entity';
 import { TreatmentsModule } from '../treatments/treatments.module';
 import { User } from '../users/user.entity';
+import { AppointmentEvent } from './appointment-event.entity';
+import { AppointmentEventsService } from './appointment-events.service';
+import { AppointmentHistoryListener } from './appointment-history.listener';
 import { AppointmentPhoto } from './appointment-photo.entity';
 import { AppointmentPhotosService } from './appointment-photos.service';
 import { AppointmentSeedService } from './appointment-seed.service';
@@ -20,6 +23,7 @@ import { StylistsController } from './stylists.controller';
   imports: [
     TypeOrmModule.forFeature([
       Appointment,
+      AppointmentEvent,
       AppointmentPhoto,
       AppointmentStockLine,
       StylistSkill,
@@ -36,6 +40,8 @@ import { StylistsController } from './stylists.controller';
     AppointmentsService,
     AppointmentSeedService,
     AppointmentPhotosService,
+    AppointmentEventsService,
+    AppointmentHistoryListener,
   ],
 })
 export class AppointmentsModule {}

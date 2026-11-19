@@ -98,6 +98,7 @@ function Appointments({ role }) {
   const [startsAt, setStartsAt] = useState('')
   const [error, setError] = useState('')
   const [reload, setReload] = useState(0)
+  const [history, setHistory] = useState([])
 
   const canBook = role === 'CLIENT'
 
@@ -124,6 +125,29 @@ function Appointments({ role }) {
       cancelled = true
     }
   }, [page, reload])
+
+  useEffect(() => {
+    if (role === 'CLIENT') {
+      return undefined
+    }
+
+    let cancelled = false
+    api('/api/appointments/history')
+      .then((result) => {
+        if (!cancelled) {
+          setHistory(result.data)
+        }
+      })
+      .catch((loadError) => {
+        if (!cancelled) {
+          setError(loadError.message)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [role, reload])
 
   useEffect(() => {
     if (!canBook) {
@@ -309,6 +333,20 @@ function Appointments({ role }) {
       ) : null}
 
       {error ? <p className="error">{error}</p> : null}
+
+      {role !== 'CLIENT' ? (
+        <>
+          <h2>Historia</h2>
+          <ul className="people card history">
+            {history.length === 0 ? (
+              <li className="empty">Brak wpisów.</li>
+            ) : null}
+            {history.map((item) => (
+              <li key={item.id}>{item.message}</li>
+            ))}
+          </ul>
+        </>
+      ) : null}
 
       <ul className="people card">
         {appointments.length === 0 ? (
