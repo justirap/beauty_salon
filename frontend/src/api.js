@@ -15,8 +15,9 @@ export function setToken(token) {
 export async function api(path, options = {}) {
   const { method = 'GET', body, auth = true } = options
   const headers = {}
+  const isForm = typeof FormData !== 'undefined' && body instanceof FormData
 
-  if (body !== undefined) {
+  if (body !== undefined && !isForm) {
     headers['Content-Type'] = 'application/json'
   }
 
@@ -32,7 +33,7 @@ export async function api(path, options = {}) {
     response = await fetch(path, {
       method,
       headers,
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body: body === undefined ? undefined : isForm ? body : JSON.stringify(body),
     })
   } catch {
     throw new Error('Brak połączenia z serwerem')

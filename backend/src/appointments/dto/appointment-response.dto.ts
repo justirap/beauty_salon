@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { AppointmentPhoto } from '../appointment-photo.entity';
 import { Appointment, AppointmentStatus } from '../appointment.entity';
 
 export class AppointmentPersonDto {
@@ -26,6 +27,11 @@ export class AppointmentTreatmentDto {
   price: number;
 }
 
+export class AppointmentPhotoDto {
+  @ApiProperty()
+  id: string;
+}
+
 export class AppointmentResponseDto {
   @ApiProperty()
   id: string;
@@ -47,6 +53,9 @@ export class AppointmentResponseDto {
 
   @ApiProperty({ type: AppointmentTreatmentDto })
   treatment: AppointmentTreatmentDto;
+
+  @ApiProperty({ type: [AppointmentPhotoDto] })
+  photos: AppointmentPhotoDto[];
 }
 
 function toPerson(person: {
@@ -77,5 +86,8 @@ export function toAppointmentResponse(
       durationMinutes: appointment.treatment.durationMinutes,
       price: Number(appointment.treatment.price),
     },
+    photos: (appointment.photos ?? []).map((photo: AppointmentPhoto) => ({
+      id: photo.id,
+    })),
   };
 }

@@ -283,6 +283,38 @@ button.quiet:disabled {
   align-items: center;
 }
 
+.photo-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  margin-top: 12px;
+  align-items: center;
+}
+
+.photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+
+.photo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #6d534d;
+  font-size: 0.92rem;
+}
+
+.photo img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  background: #f6ece8;
+}
+
 .actions {
   display: flex;
   gap: 8px;

@@ -11,6 +11,7 @@ import { Product } from '../products/product.entity';
 import { TreatmentIngredient } from '../treatments/treatment-ingredient.entity';
 import { Treatment } from '../treatments/treatment.entity';
 import { UserRole, User } from '../users/user.entity';
+import { AppointmentPhotosService } from './appointment-photos.service';
 import { AppointmentStockLine } from './appointment-stock-line.entity';
 import { Appointment, AppointmentStatus } from './appointment.entity';
 import { ListAppointmentsQueryDto } from './dto/list-appointments-query.dto';
@@ -50,6 +51,7 @@ export class AppointmentsService {
     private readonly usersRepository: Repository<User>,
     @InjectRepository(Treatment)
     private readonly treatmentsRepository: Repository<Treatment>,
+    private readonly photosService: AppointmentPhotosService,
   ) {}
 
   async findAll(
@@ -75,6 +77,7 @@ export class AppointmentsService {
       .skip((page - 1) * limit)
       .take(limit)
       .getManyAndCount();
+    await this.photosService.attach(appointments);
     return { appointments, total, page, limit };
   }
 
@@ -385,7 +388,7 @@ export class AppointmentsService {
   ): Promise<Appointment> {
     const appointment = await manager.getRepository(Appointment).findOne({
       where: { id },
-      relations: { client: true, stylist: true, treatment: true },
+      relations: { client: true, stylist: true, treatment: true, photos: true },
     });
     if (!appointment) {
       throw new NotFoundException('Nie znaleziono wizyty');

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { api } from './api.js'
+import { api, getToken } from './api.js'
 
 const STATUS_LABELS = {
   BOOKED: 'Umówiona',
@@ -36,6 +36,42 @@ async function loadAll(path) {
     page += 1
   } while (collected.length < total)
   return collected
+}
+
+function VisitPhoto({ appointmentId, photoId }) {
+  const [src, setSrc] = useState('')
+
+  useEffect(() => {
+    let cancelled = false
+    let objectUrl = ''
+    const token = getToken()
+
+    fetch(`/api/appointments/${appointmentId}/photos/${photoId}/file`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Nie udało się wczytać zdjęcia')
+        }
+        return response.blob()
+      })
+      .then((blob) => {
+        objectUrl = URL.createObjectURL(blob)
+        if (!cancelled) {
+          setSrc(objectUrl)
+        }
+      })
+      .catch(() => {})
+
+    return () => {
+      cancelled = true
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl)
+      }
+    }
+  }, [appointmentId, photoId])
+
+  return src ? <img src={src} alt="Zdjęcie inspiracji" /> : null
 }
 
 function whoLine(appointment, role) {
@@ -156,6 +192,42 @@ function Appointments({ role }) {
     }
   }
 
+  async function addPhoto(event, appointment) {
+    event.preventDefault()
+    const file = event.currentTarget.elements.file.files?.[0]
+    if (!file) {
+      return
+    }
+    const body = new FormData()
+    body.append('file', file)
+    setError('')
+    try {
+      await api(`/api/appointments/${appointment.id}/photos`, {
+        method: 'POST',
+        body,
+      })
+      event.currentTarget.reset()
+      setReload((current) => current + 1)
+    } catch (addError) {
+      setError(addError.message)
+    }
+  }
+
+  async function removePhoto(appointment, photo) {
+    if (!window.confirm('Usunąć zdjęcie inspiracji?')) {
+      return
+    }
+    setError('')
+    try {
+      await api(`/api/appointments/${appointment.id}/photos/${photo.id}`, {
+        method: 'DELETE',
+      })
+      setReload((current) => current + 1)
+    } catch (removeError) {
+      setError(removeError.message)
+    }
+  }
+
   async function cancel(appointment) {
     const when = formatWhen(appointment.startsAt)
     if (!window.confirm(`Odwołać wizytę ${appointment.treatment.name}, ${when}?`)) {
@@ -256,6 +328,44 @@ function Appointments({ role }) {
                 {formatRange(appointment.startsAt, appointment.endsAt)} · {STATUS_LABELS[appointment.status]}
               </p>
               <p className="description">{whoLine(appointment, role)}</p>
+              {(appointment.photos ?? []).length > 0 ? (
+                <ul className="photos">
+                  {appointment.photos.map((photo) => (
+                    <li className="photo" key={photo.id}>
+                      <VisitPhoto
+                        appointmentId={appointment.id}
+                        photoId={photo.id}
+                      />
+                      {role === 'CLIENT' ? (
+                        <button
+                          className="quiet"
+                          type="button"
+                          onClick={() => removePhoto(appointment, photo)}
+                        >
+                          Usuń zdjęcie
+                        </button>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+              {role === 'CLIENT' && appointment.status === 'BOOKED' ? (
+                <form
+                  className="photo-form"
+                  onSubmit={(event) => addPhoto(event, appointment)}
+                >
+                  <input
+                    name="file"
+                    aria-label="Zdjęcie inspiracji"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    required
+                  />
+                  <button className="quiet" type="submit">
+                    Dodaj zdjęcie
+                  </button>
+                </form>
+              ) : null}
             </div>
             {canCancel && appointment.status === 'BOOKED' ? (
               <button

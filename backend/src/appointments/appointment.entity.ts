@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Treatment } from '../treatments/treatment.entity';
 import { User } from '../users/user.entity';
+import { AppointmentPhoto } from './appointment-photo.entity';
 import { AppointmentStockLine } from './appointment-stock-line.entity';
 
 export enum AppointmentStatus {
@@ -56,4 +57,7 @@ export class Appointment {
 
   @OneToMany(() => AppointmentStockLine, (line) => line.appointment)
   stockLines: AppointmentStockLine[];
+
+  @OneToMany(() => AppointmentPhoto, (photo) => photo.appointment)
+  photos: AppointmentPhoto[];
 }
