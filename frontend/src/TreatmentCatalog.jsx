@@ -119,6 +119,7 @@ function TreatmentCatalog({ canManage, titled = true }) {
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(5)
+  const [search, setSearch] = useState('')
   const [form, setForm] = useState(EMPTY_FORM)
   const [editingId, setEditingId] = useState(null)
   const [error, setError] = useState('')
@@ -127,6 +128,10 @@ function TreatmentCatalog({ canManage, titled = true }) {
   useEffect(() => {
     let cancelled = false
     const params = new URLSearchParams({ page: String(page), limit: '5' })
+    const term = search.trim()
+    if (term) {
+      params.set('search', term)
+    }
 
     api(`/api/treatments?${params}`)
       .then((result) => {
@@ -146,7 +151,7 @@ function TreatmentCatalog({ canManage, titled = true }) {
     return () => {
       cancelled = true
     }
-  }, [page, reload])
+  }, [page, reload, search])
 
   useEffect(() => {
     if (!canManage) {
@@ -366,9 +371,25 @@ function TreatmentCatalog({ canManage, titled = true }) {
 
       {error ? <p className="error">{error}</p> : null}
 
+      <label className="field">
+        Szukaj
+        <input
+          type="search"
+          value={search}
+          maxLength={80}
+          placeholder="Nazwa lub opis"
+          onChange={(event) => {
+            setSearch(event.target.value)
+            setPage(1)
+          }}
+        />
+      </label>
+
       <ul className="people card">
         {treatments.length === 0 ? (
-          <li className="empty">Brak zabiegów.</li>
+          <li className="empty">
+            {search.trim() ? 'Brak pasujących zabiegów.' : 'Brak zabiegów.'}
+          </li>
         ) : null}
         {treatments.map((treatment) => {
           const usedIds = new Set(

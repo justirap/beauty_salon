@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { FindOptionsWhere, ILike, In, Repository } from 'typeorm';
 import { isForeignKeyError } from '../common/is-foreign-key-error';
 import { Product } from '../products/product.entity';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
@@ -56,7 +56,9 @@ export class TreatmentsService {
   async findAll(query: ListTreatmentsQueryDto): Promise<TreatmentPage> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 5;
+    const where = this.searchWhere(query.search);
     const [pageRows, total] = await this.treatmentsRepository.findAndCount({
+      where,
       order: { name: 'ASC' },
       skip: (page - 1) * limit,
       take: limit,
@@ -193,6 +195,17 @@ export class TreatmentsService {
       throw new NotFoundException('Nie znaleziono pozycji składu');
     }
     return ingredient;
+  }
+
+  private searchWhere(
+    search?: string,
+  ): FindOptionsWhere<Treatment>[] | undefined {
+    const term = search?.trim();
+    if (!term) {
+      return undefined;
+    }
+    const pattern = `%${term.replace(/[%_\\]/g, (character) => `\\${character}`)}%`;
+    return [{ name: ILike(pattern) }, { description: ILike(pattern) }];
   }
 
   private money(value: number): number {
