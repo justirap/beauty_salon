@@ -96,6 +96,45 @@ Reguły biznesowe:
 2. Stylistka wykonuje tylko zabiegi, do których ma uprawnienia
 3. Zabieg wymaga dostępnych kosmetyków na magazynie
 
+## Model danych
+
+Oferta i personel:
+
+```mermaid
+erDiagram
+  direction LR
+  users ||--o{ stylist_skills : stylist_id
+  treatments ||--o{ stylist_skills : treatment_id
+  treatments ||--o{ treatment_ingredients : treatment_id
+  products ||--o{ treatment_ingredients : product_id
+```
+
+Wizyta. `client_id` i `stylist_id` to dwa osobne powiązania z `users`:
+
+```mermaid
+erDiagram
+  direction TB
+  users ||--o{ appointments : client_id
+  users ||--o{ appointments : stylist_id
+  treatments ||--o{ appointments : treatment_id
+  products ||--o{ appointment_stock_lines : product_id
+  appointments ||--o{ appointment_stock_lines : zużycie
+  appointments ||--o{ appointment_photos : zdjęcia
+  appointments ||--o{ appointment_events : historia
+```
+
+| Tabela | Pola poza kluczami |
+| --- | --- |
+| users | first_name, last_name, email, password_hash, role |
+| treatments | name, description, duration_minutes, price |
+| products | name, stock |
+| treatment_ingredients | quantity_per_visit |
+| stylist_skills | tylko para stylistka–zabieg |
+| appointments | starts_at, ends_at, status |
+| appointment_photos | file_name, mime_type |
+| appointment_stock_lines | quantity |
+| appointment_events | message, created_at |
+
 ## Dokumentacja REST API
 
 Swagger: http://localhost:3000/api/docs
