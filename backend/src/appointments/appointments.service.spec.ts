@@ -12,10 +12,6 @@ import { Treatment } from '../treatments/treatment.entity';
 import { Product } from '../products/product.entity';
 import { UserRole, User } from '../users/user.entity';
 
-jest.mock('@nestjs/event-emitter', () => ({
-  EventEmitter2: class EventEmitter2 {},
-}));
-
 function client(): User {
   return {
     id: 'client-1',

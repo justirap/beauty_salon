@@ -4,7 +4,7 @@ module.exports = {
   rootDir: '.',
   testRegex: '.*\\.spec\\.ts$',
   transform: {
-    '^.+\\.ts$': [
+    '^.+\\.(t|j)s$': [
       'ts-jest',
       {
         tsconfig: {
@@ -12,6 +12,7 @@ module.exports = {
           moduleResolution: 'node',
           resolvePackageJsonExports: false,
           esModuleInterop: true,
+          allowJs: true,
           experimentalDecorators: true,
           emitDecoratorMetadata: true,
           strictNullChecks: true,
@@ -19,5 +20,10 @@ module.exports = {
       },
     ],
   },
+  transformIgnorePatterns: ['/node_modules/(?!(@nestjs)/)'],
   testEnvironment: 'node',
+  setupFiles: ['<rootDir>/test/set-env.ts'],
+  moduleNameMapper: {
+    '^@nestjs/event-emitter$': '<rootDir>/test/event-emitter.mock.js',
+  },
 };

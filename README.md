@@ -38,6 +38,8 @@ Frontend: http://localhost:5173
 
 Schemat bazy powstaje z migracji przy starcie backendu. Ręcznie nakłada się ją w katalogu `backend` przez `npm run migration:run`.
 
+Testy backendu: w katalogu `backend` uruchom `npm test`.
+
 ## Konta
 
 Role:
